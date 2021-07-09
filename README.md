@@ -73,8 +73,9 @@
 또한 더욱 많은 방문자의 특징을 추출함으로 방문자 통계 분석에 추가적으로 사용할 수 있도록 발전시켜야 함.
 
 ## Reports
-[소프트웨어융합캡스톤디자인02(중간보고서_김지현).pdf](https://github.com/kjh29784/Capstone-Design-Example/files/6793098/02._.pdf)
 
-[소프트웨어융합캡스톤디자인03(최종보고서_김지현_2017102221).pdf](https://github.com/kjh29784/Capstone-Design-Example/files/6793102/03._._2017102221.pdf)
+[소프트웨어융합캡스톤디자인02(중간보고서_김지현).pdf](https://github.com/kjh29784/kjh29784-Capstone-Design-kjh2017102221/files/6793329/02._.pdf)
+
+[소프트웨어융합캡스톤디자인03(최종보고서_김지현_2017102221).pdf](https://github.com/kjh29784/kjh29784-Capstone-Design-kjh2017102221/files/6793328/03._._2017102221.pdf)
 
 ![image](https://user-images.githubusercontent.com/68112175/125117557-620f2300-e129-11eb-830b-d0dc6ae01eb5.png)
