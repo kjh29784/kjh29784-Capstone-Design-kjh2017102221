@@ -1,6 +1,6 @@
 # Deep learning-based visitor detection & counting system (Capstone design 2020-2)
 
-팀명 : 김지현
+팀명 : 김지현 
 
 팀구성 총인원 : 총 1명
 
