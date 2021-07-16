@@ -31,10 +31,10 @@ Yolov5와 DeepSort를 통한 방문객 탐지 및 추적과 feature extration을
    이에 매장 내 카메라를 설치하여 출입자를 카운팅함으로써 무단 출입을 검출하는 솔루션 개발이 필요함
 
 ## 주요내용
-Yolov3 구조를 기반으로WIDERFACE dataset을 사용하여 학습한다.
-제작된 네트워크를 기반으로 실시간 Detection알고리즘을 제작한다.
-Deepsort 구조를 개선하여, 얼굴 추적에 맞도록 Feature Descriptor를 Arcface로 대체하여 얼굴에 맞는 feature로 추적 알고리즘을 제작한다. 이 때 임의의 사람에 대해서 고유한 id를 주어 추적하도록 한다.
-정적인 사람 이미지에 대해서 Feature 정보를 추출하고, 이를 기반으로 영상에 존재하는 사람을 추적하는 알고리즘을 개발한다. 알고있는 사람의 얼굴 정보가 주어진다면, 해당 사람을 계속해서 추적하도록 한다.
+ 1. Yolov5 모델을 기반으로 MOT16 dataset과 mask착용 이미지 데이터셋을 사용하여 학습
+ 2. 학습시킨 방문객 검출 Yolov5모델을 DeepSort구조를 이용하여 추적할 수 있도록 개발
+ 3. Tracking 모델을 통해 기록된 보행자의 box 정보를 바탕으로 OpenCV를 통해 방문자 출입 Counting 알고리즘 개발
+ 4. 1번에서 학습시킨 mask 검출 모델을 3번 모델과 결합
 
 ## Results
 - MOT 16 데이터셋 벤치마크 결과
