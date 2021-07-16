@@ -178,5 +178,5 @@ Yolov5와 DeepSort를 통한 방문객 탐지 및 추적과 feature extration을
 [소프트웨어융합캡스톤디자인02(중간보고서_김지현).pdf](https://github.com/kjh29784/Capstone-Design-Example/files/6793098/02._.pdf)
 
 [소프트웨어융합캡스톤디자인03(최종보고서_김지현_2017102221).pdf](https://github.com/kjh29784/Capstone-Design-Example/files/6793102/03._._2017102221.pdf)
-![output_1 (2)](https://user-images.githubusercontent.com/68112175/125926058-95861104-6758-46d8-a746-4ea0b88c212d.gif)
+
 
