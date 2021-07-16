@@ -42,9 +42,113 @@ Yolov5와 DeepSort를 통한 방문객 탐지 및 추적과 feature extration을
 2. DeepSort모델을 통한 보행자 추적 모델 개발
     기존 DeepSort가 보행자를 기반으로 하여 Track matching을 진행했기 때문에 큰 수정없이 DeepSort Repository를 fork하여 FeatureDescriptor의 Input shape이 2:1 비율로 하여 id매칭을 진행     하였습니다.
 3. 출입자 Counting 알고리즘 개발
-    OpenCV를 사용하여 DeepSort 보행자 추적 모델에서 
-    
-    
+    검출한 보행자 박스 데이터를 이용, track.py OpenCV를 통해 데이터를 Y 좌표 기준으로 5등분 하여 센터 라인과의 비교 및 이중 확인으로 count를 증가 혹은 감소시킵니다.
+      ```
+          flag_t = False
+          flag_b = False
+          flag_tm = False
+          flag_bm = False
+
+          if y1 == center_line:
+              flag_t = True
+          if y2 == center_line:
+              flag_b = True
+
+          if (y1 + (y2 - y1) * (0 / 5)) < center_line and center_line < (y1 + (y2 - y1) * (1 / 5)):
+              flag_tm = True
+          if (y1 + (y2 - y1) * (4 / 5)) < center_line and center_line < (y1 + (y2 - y1) * (5 / 5)):
+              flag_bm = True
+
+          if len(counting_id) == 0:
+              if flag_t == True:
+                  counting_id.append([id, 1])
+              if flag_b == True:
+                  counting_id.append([id, 2])
+          else:
+              for j, temp in enumerate(counting_id):
+
+                  index = -1
+                  if temp[0] == id:
+                      index = j
+                  if index != -1:
+                      if counting_id[j][0] == id and counting_id[j][1] == 1:
+                          if flag_tm == True:
+                              counting_id[j][1] = 3
+                              counting -= 1
+                              print("2,", counting)
+                      elif counting_id[j][0] == id and counting_id[j][1] == 2:
+                          if flag_bm == True:
+                              counting += 1
+                              counting_id[j][1] = 4
+                              print("3,", counting)
+              if index == -1:
+                  if flag_t == True:
+                      counting_id.append([id, 1])
+                  if flag_b == True:
+                      counting_id.append([id, 2])
+
+      cv2.putText(img, "counting: " + str(counting), (10, 50), cv2.FONT_HERSHEY_PLAIN, 2, [255, 255, 255], 2)
+      f2.close()
+      return img, counting, counting_id
+      ```
+## 4. 마스크 검출 모델과 방문자 추적 및 카운팅 모델 결합
+  마스크 검출 모델의 detect.py에서 .mp4 파일으로부터 마스크 정보를 txt파일로 추출하고, 이를 트래킹 모델의 track.py에서 받아와 이에 맞는 ID의 보행자에게 데이터를 부여합니다.
+        
+      ```
+      mask_flag = False
+      print(frame_idx)
+      all_mask = []
+      try:
+          f = open("/content/yolov5/runs/detect/exp/labels/mask_test_" + str(frame_idx) + ".txt", 'r')
+          line = f.readlines()
+          mask_flag = True
+          all_mask = []
+
+          for mask in line:
+              temp = mask.split(" ")
+              temp[0] = int(temp[0])
+              temp[1] = int(temp[1])
+              temp[2] = int(temp[2])
+              temp[3] = int(temp[3])
+              temp[4] = int(temp[4])
+              all_mask.append(temp)
+      except Exception:
+          mask_flag = False
+      f2 = open("ouputs.txt", 'a')
+
+      for i, box in enumerate(bbox):
+          x1, y1, x2, y2 = [int(i) for i in box]
+          x1 += offset[0]
+          x2 += offset[0]
+          y1 += offset[1]
+          y2 += offset[1]
+          id = int(identities[i]) if identities is not None else 0
+          color = compute_color_for_labels(id)
+          label = '{}{:d}'.format("", id)
+          if mask_flag == True:
+              for mask in all_mask:
+                  if x1 < mask[1] and y1 < mask[2]:
+                      if y1 > mask[3] and y2 > mask[4]:
+                          cv2.rectangle(
+                              img, (mask[1], mask[2]), (mask[3], mask[4]), color,1)
+                          if mask[0] == 1:
+                              mask_txt = 'no mask'
+                          elif mask[0] == 0:
+                              mask_txt = 'mask'
+                          print(mask_txt)
+                          cv2.putText(img, mask_txt, (mask[1],mask[2]), cv2.FONT_HERSHEY_PLAIN, 2, [255, 255, 255], 2)
+
+                          f2.write(str(frame_idx)+ ","+label+","+mask_txt+"\n")
+          # box text and bar
+
+          t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 2, 2)[0]
+          cv2.rectangle(img, (x1, y1), (x2, y2), color, 3)
+          cv2.rectangle(
+              img, (x1, y1), (x1 + t_size[0] + 3, y1 + t_size[1] + 4), color, -1)
+          cv2.putText(img, label, (x1, y1 +
+                                   t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 2, [255, 255, 255], 2)
+          cv2.line(img, (0, center_line), (img.shape[1], center_line), [255, 255, 255], 2)
+      ```
 ## Results
 - MOT 16 데이터셋 벤치마크 결과
 
@@ -68,6 +172,7 @@ Yolov5와 DeepSort를 통한 방문객 탐지 및 추적과 feature extration을
   다. 결론 및 제언
 벤치마크의 전반적인 점수가 예상치보다 낮게 나옴에 따라 앞으로 모델 변경과 추가적인 데이터셋 구축, 및 학습시켜 모델의 성능을 향상시켜야 함.
 또한 더욱 많은 방문자의 특징을 추출함으로 방문자 통계 분석에 추가적으로 사용할 수 있도록 발전시켜야 함.
+카운팅하는 방식에 대해서도 새로운 방식을 도출해낼 필요가 있음.
 
 ## Reports
 [소프트웨어융합캡스톤디자인02(중간보고서_김지현).pdf](https://github.com/kjh29784/Capstone-Design-Example/files/6793098/02._.pdf)
