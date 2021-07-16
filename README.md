@@ -36,6 +36,15 @@ Yolov5와 DeepSort를 통한 방문객 탐지 및 추적과 feature extration을
  3. Tracking 모델을 통해 기록된 보행자의 box 정보를 바탕으로 OpenCV를 통해 방문자 출입 Counting 알고리즘 개발
  4. 1번에서 학습시킨 mask 검출 모델을 3번 모델과 결합
 
+## 세부 사항
+1. Yolov3 -> yolov5로 모델 변경
+    Tracking모델의 작동 과정을 고려했을때 Detector의 성능이 매우 중요하다고 판단하였습니다. 이에 pytorch로 구현하여 더욱 쉽게 환경 구성이 가능하고, 지난 모델과는 다른(Yolov3) CSPNet기     반의 BackBone을 이용하여 더욱 높은 성능을 고려 할 수 있는 Yolov5로 모델을 변경하였습니다. 또한 방문객만을 검출하는 것이 목표임으로 보행자 이미지 데이터 셋인 MOT16 데이터셋을 가지고     방문자에 국한하여 모델을 Train시켰습니다. MOT16의 훈련 데이터 셋은 5316개의 프레임, 110407개의 annotation된 박스를 가지고 있습니다. 이는 다양한 방문객의 모습을 반영하기에 충분하다고     판단하였습니다. yolov5로의 모델 변경은 mask detector에도 똑같이 적용되었습니다. 
+2. DeepSort모델을 통한 보행자 추적 모델 개발
+    기존 DeepSort가 보행자를 기반으로 하여 Track matching을 진행했기 때문에 큰 수정없이 DeepSort Repository를 fork하여 FeatureDescriptor의 Input shape이 2:1 비율로 하여 id매칭을 진행     하였습니다.
+3. 출입자 Counting 알고리즘 개발
+    OpenCV를 사용하여 DeepSort 보행자 추적 모델에서 
+    
+    
 ## Results
 - MOT 16 데이터셋 벤치마크 결과
 
